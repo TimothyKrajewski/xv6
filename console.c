@@ -223,12 +223,13 @@ while((c = getc()) >= 0){
         }
       if(upCount == historyIndex)
           break;
-      for (int i = 0; i<prevCount; i++){
+      int i = 0;
+      for ( i = 0; i<prevCount; i++){
         input.e--;
         consputc(BACKSPACE);
       }
       prevCount = strlen(history[upCount]);
-      for(int i = 0; i < strlen(history[upCount]); i++){
+      for(i = 0; i < strlen(history[upCount]); i++){
           p = (int) history[upCount][i];
           if(p != 0 && input.e-input.r < INPUT_BUF)
             input.buf[input.e++ % INPUT_BUF] = p;
@@ -242,12 +243,12 @@ while((c = getc()) >= 0){
           upCount = 0;
       if(upCount == historyIndex)
           break;
-      for(int i = 0; i<prevCount; i++){
+      for(i = 0; i<prevCount; i++){
           input.e--;
           consputc(BACKSPACE);
       }
       prevCount = strlen(history[upCount]);
-      for(int i = 0; i < strlen(history[upCount]); i++){
+      for(i = 0; i < strlen(history[upCount]); i++){
           p = (int) history[upCount][i];
           if(p != 0 && input.e-input.r < INPUT_BUF)
               input.buf[input.e++ % INPUT_BUF] = p;

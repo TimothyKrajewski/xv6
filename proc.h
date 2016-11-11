@@ -67,8 +67,13 @@ struct proc {
   struct inode *cwd;           // Current directory
   char name[16];               // Process name (debugging)
   int priority;
+  uint ctime;
+  int stime;
+  int retime;
+  int rutime; 
+  int fake[8];
 };
-
+void updatestatistics();
 // Process memory is laid out contiguously, low addresses first:
 //   text
 //   original data and bss
