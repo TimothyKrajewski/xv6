@@ -53,6 +53,7 @@ found:
   p->retime = 0;
   p->rutime = 0;
   p->stime = 0;
+  p->count = 0;
   p->fake[0] = '*';
   p->fake[1] = '*';
   p->fake[2] = '*';
@@ -295,7 +296,7 @@ scheduler(void)
  
     // Loop over process table looking for process to run.
     acquire(&ptable.lock);
-    insertionSort();
+    //insertionSort();
     for(p = ptable.proc; p < &ptable.proc[NPROC]; p++){
       if(p->state != RUNNABLE)
         continue;
@@ -304,6 +305,7 @@ scheduler(void)
       // to release ptable.lock and then reacquire it
       // before jumping back to us.
      proc = p;
+      p->count++;
       switchuvm(p);
       p->state = RUNNING;
       swtch(&cpu->scheduler, proc->context);
@@ -493,7 +495,7 @@ int ps(void)
 	return 0;
 }
 
-int wait2(int *retime, int *rutime, int *stime) {
+int wait2(int *retime, int *rutime, int *stime, int *count) {
   struct proc *p;
   int havekids, pid;
   acquire(&ptable.lock);
@@ -509,6 +511,7 @@ int wait2(int *retime, int *rutime, int *stime) {
         *retime = p->retime;
         *rutime = p->rutime;
         *stime = p->stime;
+        *count = p->count;
         pid = p->pid;
         kfree(p->kstack);
         p->kstack = 0;
@@ -551,6 +554,7 @@ void updatestatistics() {
         p->retime++;
         break;
       case RUNNING:
+      //  p->count++;
         p->rutime++;
         break;
       default:

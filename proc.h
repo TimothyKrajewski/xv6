@@ -70,7 +70,8 @@ struct proc {
   uint ctime;
   int stime;
   int retime;
-  int rutime; 
+  int rutime;
+  int count;
   int fake[8];
 };
 void updatestatistics();

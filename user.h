@@ -25,7 +25,7 @@ int uptime(void);
 int getcwd(void*, int);
 int ps(void);
 void yield(void);
-int wait2(int*,int*,int*);
+int wait2(int*,int*,int*, int*);
 
 // ulib.c
 int stat(char*, struct stat*);

@@ -26,14 +26,16 @@ sys_wait(void)
 }
 
 int sys_wait2(void) {
-  int *retime, *rutime, *stime;
+  int *retime, *rutime, *stime, *count;
   if (argptr(0, (void*)&retime, sizeof(retime)) < 0)
     return -1;
   if (argptr(1, (void*)&rutime, sizeof(retime)) < 0)
     return -1;
   if (argptr(2, (void*)&stime, sizeof(stime)) < 0)
     return -1;
-  return wait2(retime, rutime, stime);
+  if (argptr(3, (void*)&count, sizeof(count))<0)
+      return -1;
+  return wait2(retime, rutime, stime, count);
 }
 
 int
@@ -98,7 +100,7 @@ sys_uptime(void)
   xticks = ticks;
   release(&tickslock);
   return xticks;
-  //return -1;
+ // return -1;
 }
 
 int sys_ps(void)

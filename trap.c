@@ -50,7 +50,7 @@ trap(struct trapframe *tf)
   case T_IRQ0 + IRQ_TIMER:
     if(cpu->id == 0){
       acquire(&tickslock);
-      ticks++;
+     // ticks++;
       updatestatistics();
       wakeup(&ticks);
       release(&tickslock);

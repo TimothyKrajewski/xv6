@@ -13,6 +13,7 @@ main(int argc, char *argv[])
 	int n;
 	int j = 0;
 	int k;
+    int count;
 	int retime;
 	int rutime;
 	int stime;
@@ -49,7 +50,7 @@ main(int argc, char *argv[])
 		continue; // father continues to spawn the next child
 	}
 	for (i = 0; i < 3 * n; i++) {
-		pid = wait2(&retime, &rutime, &stime);
+		pid = wait2(&retime, &rutime, &stime, &count);
 		int res = (pid - 4) % 3; // correlates to j in the dispatching loop
 		switch(res) {
 			case 0: // CPU bound processes
