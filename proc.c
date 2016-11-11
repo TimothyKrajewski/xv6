@@ -17,6 +17,7 @@ static struct proc *initproc;
 int nextpid = 1;
 extern void forkret(void);
 extern void trapret(void);
+extern void insertionSort(void);
 
 static void wakeup1(void *chan);
 
@@ -47,6 +48,7 @@ allocproc(void)
 found:
   p->state = EMBRYO;
   p->pid = nextpid++;
+  p->priority = nextpid;
   release(&ptable.lock);
 
   // Allocate kernel stack.
@@ -202,7 +204,22 @@ exit(void)
   sched();
   panic("zombie exit");
 }
-
+void
+insertionSort(void){
+    struct proc min = ptable.proc[0];
+    struct proc temp = min;
+    for(int i = 0; ptable.proc[i].state == UNUSED; i++){
+        min = ptable.proc[i];
+        for(int j = i; ptable.proc[j].state == UNUSED; j++){
+            if(min.priority > ptable.proc[j+1].priority){
+                min = ptable.proc[j+1];
+            }                   
+        }
+        temp = ptable.proc[i];
+        ptable.proc[i] = min;
+        min = temp;
+    }
+}
 // Wait for a child process to exit and return its pid.
 // Return -1 if this process has no children.
 int
@@ -262,9 +279,10 @@ scheduler(void)
   for(;;){
     // Enable interrupts on this processor.
     sti();
-
+ 
     // Loop over process table looking for process to run.
     acquire(&ptable.lock);
+    insertionSort();
     for(p = ptable.proc; p < &ptable.proc[NPROC]; p++){
       if(p->state != RUNNABLE)
         continue;
@@ -272,7 +290,7 @@ scheduler(void)
       // Switch to chosen process.  It is the process's job
       // to release ptable.lock and then reacquire it
       // before jumping back to us.
-      proc = p;
+     proc = p;
       switchuvm(p);
       p->state = RUNNING;
       swtch(&cpu->scheduler, proc->context);
