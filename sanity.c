@@ -58,7 +58,7 @@
 	//int res = (pid - 4) % 3; // correlates to j in the dispatching loop
 	//switch(res) {
 	// case 0: // CPU bound processes
-	printf(1, "CPU-bound, pid: %d, ready: %d, running: %d, sleeping: %d, turnaround: %d", pid, retime, rutime, stime, retime + rutime + stime);
+	printf(1, "CPU-bound, pid: %d, ready: %d, running: %d, sleeping: %d, turnaround: %d \n", pid, retime, rutime, stime, retime + rutime + stime);
 	sums[0] += retime;
 	sums[1] += rutime;
 	sums[2] += stime;
