@@ -22,7 +22,8 @@
 		i = n; //unimportant
 		int pid;
 		int trial;
-		for(trial =0; trial < 50; trial++){
+		for(trial =1; trial <= 50; trial++){
+		printf(1, "-----------------Trail %d-----------------\n\n", trial);
 		for (i = 0; i < n; i++) 
 		{
 			pid = fork();
@@ -51,6 +52,7 @@
 	retime = 0; 
 	rutime = 0;
 	stime = 0; 
+	
 	}	
 	exit();
 	}
