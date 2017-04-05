@@ -48,7 +48,10 @@ allocproc(void)
 found:
   p->state = EMBRYO;
   p->pid = nextpid++;
-  p->priority = nextpid;
+  if(nextpid > 3)
+  	p->priority = 1000 - nextpid;
+  else
+    p->priority = nextpid;
   p->ctime = ticks;
   p->retime = 0;
   p->rutime = 0;
@@ -222,9 +225,12 @@ void
 insertionSort(void){
     struct proc min = ptable.proc[0];
     struct proc temp = min;
-    for(int i = 0; ptable.proc[i].state == UNUSED; i++){
+    int i;
+    int j;
+    	
+    for(i = 0; i<nextpid; i++){
         min = ptable.proc[i];
-        for(int j = i; ptable.proc[j].state == UNUSED; j++){
+        for(j = i; j < nextpid; j++){
             if(min.priority > ptable.proc[j+1].priority){
                 min = ptable.proc[j+1];
             }                   
@@ -285,26 +291,46 @@ wait(void)
 //  - swtch to start running that process
 //  - eventually that process transfers control
 //      via swtch back to the scheduler.
+int mini = 100;
+int num;
 void
 scheduler(void)
 {
   struct proc *p;
-
+  
   for(;;){
     // Enable interrupts on this processor.
     sti();
  
     // Loop over process table looking for process to run.
     acquire(&ptable.lock);
-    //insertionSort();
+    
     for(p = ptable.proc; p < &ptable.proc[NPROC]; p++){
+	
       if(p->state != RUNNABLE)
         continue;
 
+      if(nextpid > 3){
+       struct proc min = ptable.proc[3];
+       int j;
+	num = nextpid;
+	if(nextpid > 63)
+	    num = 63;
+       for(j = 3; j < num; j++){
+	    
+            if(min.priority > ptable.proc[j+1].priority && ptable.proc[j+1].state == RUNNABLE){
+               min = ptable.proc[j+1];
+            }                   
+       }
+       mini = min.priority;
+    }
       // Switch to chosen process.  It is the process's job
       // to release ptable.lock and then reacquire it
       // before jumping back to us.
-     proc = p;
+	if(p->priority > mini && p->pid > 3)
+	  continue;
+     
+      proc = p;
       p->count++;
       switchuvm(p);
       p->state = RUNNING;
@@ -511,7 +537,7 @@ int wait2(int *retime, int *rutime, int *stime, int *count) {
         *retime = p->retime;
         *rutime = p->rutime;
         *stime = p->stime;
-        *count = p->count;
+        *count = p->priority;
         pid = p->pid;
         kfree(p->kstack);
         p->kstack = 0;
@@ -554,7 +580,6 @@ void updatestatistics() {
         p->retime++;
         break;
       case RUNNING:
-      //  p->count++;
         p->rutime++;
         break;
       default:
